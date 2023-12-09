@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import Navbar from "./components/Navbar";
 import { ConvexClientProvider } from "@/components/providers/convex.provider";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -43,8 +41,7 @@ export default function RootLayout({
             disableTransitionOnChange
             storageKey="Fi-Notes-themes"
           >
-            <Navbar />
-            <div className="mt-32">{children}</div>
+            {children}
           </ThemeProvider>
         </ConvexClientProvider>
       </body>
