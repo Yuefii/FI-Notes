@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme";
 import { ConvexClientProvider } from "@/components/providers/convex";
+import { ModalProvider } from "@/components/providers/modal";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -42,7 +43,8 @@ export default function RootLayout({
             disableTransitionOnChange
             storageKey="Fi-Notes-themes"
           >
-            <Toaster position="bottom-center"/>
+            <Toaster position="bottom-center" />
+            <ModalProvider />
             {children}
           </ThemeProvider>
         </ConvexClientProvider>

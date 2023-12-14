@@ -27,9 +27,11 @@ import {
 } from "@/components/ui/popover";
 import TrashBox from "./TrashBox";
 import { useSearch } from "@/hooks/useSearch";
+import { useSetting } from "@/hooks/useSetting";
 
 export const Navigation = () => {
   const create = useMutation(api.documents.create);
+  const setting = useSetting();
   const search = useSearch();
   const params = useParams();
   const pathname = usePathname();
@@ -153,7 +155,7 @@ export const Navigation = () => {
             isSearch
             label="Pencarian"
           />
-          <Item onClick={() => {}} icon={Settings} label="Pengaturan" />
+          <Item onClick={setting.onOpen} icon={Settings} label="Pengaturan" />
           <Item onClick={handleCreate} label="Halaman Baru" icon={PlusCircle} />
         </div>
         <div className="mt-4">
