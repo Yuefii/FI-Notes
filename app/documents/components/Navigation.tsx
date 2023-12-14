@@ -1,6 +1,13 @@
 "use client";
 
-import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from "lucide-react";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  Plus,
+  PlusCircle,
+  Search,
+  Settings,
+} from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
@@ -103,9 +110,9 @@ export const Navigation = () => {
   const handleCreate = () => {
     const promise = create({ title: "Tanpa Judul" });
     toast.promise(promise, {
-      loading: "Membuat Catatan Baru...",
-      success: "Catatan Baru Berhasil Dibuat!",
-      error: "Gagal Untuk Membuat Catatan Baru.",
+      loading: "Membuat Halaman Baru...",
+      success: "Halaman Baru Berhasil Dibuat!",
+      error: "Gagal Untuk Membuat Halaman Baru.",
     });
   };
 
@@ -133,10 +140,11 @@ export const Navigation = () => {
           <UserItem />
           <Item onClick={() => {}} icon={Search} isSearch label="Pencarian" />
           <Item onClick={() => {}} icon={Settings} label="Pengaturan" />
-          <Item onClick={handleCreate} label="Lembar Baru" icon={PlusCircle} />
+          <Item onClick={handleCreate} label="Halaman Baru" icon={PlusCircle} />
         </div>
         <div className="mt-4">
-          <DocumentList/>
+          <DocumentList />
+          <Item onClick={handleCreate} icon={Plus} label="Tambahkan Halaman" />
         </div>
         <div
           onMouseDown={handleMouseDown}

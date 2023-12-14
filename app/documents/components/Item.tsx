@@ -1,11 +1,26 @@
 "use client";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
+import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
-import { ChevronDown, ChevronRight, LucideIcon, Plus } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  LucideIcon,
+  MoreHorizontal,
+  Plus,
+  Trash,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -36,7 +51,9 @@ const Item = ({
 }: ItemProps) => {
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
   const create = useMutation(api.documents.create);
+  const archive = useMutation(api.documents.archive);
   const router = useRouter();
+  const { user } = useUser();
 
   const handleExpand = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -48,22 +65,36 @@ const Item = ({
   const handleCreate = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
-    event.stopPropagation()
+    event.stopPropagation();
     if (!id) return;
     const promise = create({ title: "Tanpa Judul", parentDocument: id }).then(
       (documentId) => {
         if (!expanded) {
           onExpand?.();
         }
-        router.push(`/documents/${documentId}`);
+        // router.push(`/documents/${documentId}`);
       }
     );
     toast.promise(promise, {
-      loading: "Membuat Catatan Baru...",
-      success: "Catatan Baru Berhasil Dibuat!",
-      error: "Gagal Untuk Membuat Catatan Baru.",
+      loading: "Membuat Halaman Baru...",
+      success: "Halaman Baru Berhasil Dibuat!",
+      error: "Gagal Untuk Membuat Halaman Baru.",
     });
   };
+
+  const handleArchive = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    if (!id) return;
+    const promise = archive({ id });
+    toast.promise(promise, {
+      loading: "Sedang Menghapus Halaman...",
+      success: "Halaman Berhasil Dihapus!",
+      error: "Gagal Menghapus Halaman.",
+    });
+  };
+
   return (
     <>
       <div
@@ -97,6 +128,31 @@ const Item = ({
         )}
         {!!id && (
           <div className="flex items-center ml-auto gap-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
+                <div
+                  role="button"
+                  className="opacity-0 group-hover:opacity-100 h-full ml-auto rounded-sm hover:bg-neutral-300"
+                >
+                  <MoreHorizontal className="w-4 h-4 text-muted-foreground" />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-60"
+                align="start"
+                side="right"
+                forceMount
+              >
+                <DropdownMenuItem onClick={handleArchive}>
+                  <Trash className="w-4 h-4 mr-2" />
+                  Hapus
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <div className="text-xs text-muted-foreground p-2">
+                  Terakhir diubah oleh: {user?.firstName}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <div
               role="button"
               onClick={handleCreate}
