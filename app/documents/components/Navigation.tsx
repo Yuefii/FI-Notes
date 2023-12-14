@@ -1,21 +1,20 @@
 "use client";
 
-import {
-  ChevronsLeft,
-  MenuIcon,
-} from "lucide-react";
+import { ChevronsLeft, MenuIcon } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
 import UserItem from "./UserItem";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const Navigation = () => {
   const params = useParams();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
-
+  const documents = useQuery(api.documents.get);
   const isResizingRef = useRef(false);
   const sidebarRef = useRef<ElementRef<"aside">>(null);
   const navbarRef = useRef<ElementRef<"div">>(null);
@@ -28,7 +27,7 @@ export const Navigation = () => {
     } else {
       resetWidth();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
   useEffect(() => {
@@ -119,9 +118,13 @@ export const Navigation = () => {
           <ChevronsLeft className="h-6 w-6" />
         </div>
         <div>
-          <UserItem/>
+          <UserItem />
         </div>
-        <div className="mt-4">Documents</div>
+        <div className="mt-4">
+          {documents?.map((d) => (
+            <p key={d._id}>{d.title}</p>
+          ))}
+        </div>
         <div
           onMouseDown={handleMouseDown}
           onClick={resetWidth}
