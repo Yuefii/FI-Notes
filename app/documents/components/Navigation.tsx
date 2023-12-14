@@ -1,16 +1,19 @@
 "use client";
 
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import { ChevronsLeft, MenuIcon, PlusCircle, Search, Settings } from "lucide-react";
 import { useParams, usePathname } from "next/navigation";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
 import UserItem from "./UserItem";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import Item from "./Item";
+import { toast } from "sonner";
 
 export const Navigation = () => {
+  const create = useMutation(api.documents.create);
   const params = useParams();
   const pathname = usePathname();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -97,6 +100,15 @@ export const Navigation = () => {
     }
   };
 
+  const handleCreate = () => {
+    const promise = create({ title: "Tanpa Judul" });
+    toast.promise(promise, {
+      loading: "Membuat Catatan Baru...",
+      success: "Catatan Baru Berhasil Dibuat!",
+      error: "Gagal Untuk Membuat Catatan Baru.",
+    });
+  };
+
   return (
     <>
       <aside
@@ -119,6 +131,9 @@ export const Navigation = () => {
         </div>
         <div>
           <UserItem />
+          <Item onClick={() => {}} icon={Search} isSearch label="Pencarian" />
+          <Item onClick={() => {}} icon={Settings} label="Pengaturan" />
+          <Item onClick={handleCreate} label="Lembar Baru" icon={PlusCircle} />
         </div>
         <div className="mt-4">
           {documents?.map((d) => (
