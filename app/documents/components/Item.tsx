@@ -1,15 +1,20 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronRight, LucideIcon } from "lucide-react";
+import { useMutation } from "convex/react";
+import { ChevronDown, ChevronRight, LucideIcon, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface ItemProps {
   label: string;
   onClick: () => void;
   icon: LucideIcon;
   id?: Id<"documents">;
-  documentIcon?: boolean;
+  documentIcon?: string;
   active?: boolean;
   expanded?: boolean;
   isSearch?: boolean;
@@ -30,6 +35,35 @@ const Item = ({
   expanded,
 }: ItemProps) => {
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
+  const create = useMutation(api.documents.create);
+  const router = useRouter();
+
+  const handleExpand = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.stopPropagation();
+    onExpand?.();
+  };
+
+  const handleCreate = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    event.stopPropagation()
+    if (!id) return;
+    const promise = create({ title: "Tanpa Judul", parentDocument: id }).then(
+      (documentId) => {
+        if (!expanded) {
+          onExpand?.();
+        }
+        router.push(`/documents/${documentId}`);
+      }
+    );
+    toast.promise(promise, {
+      loading: "Membuat Catatan Baru...",
+      success: "Catatan Baru Berhasil Dibuat!",
+      error: "Gagal Untuk Membuat Catatan Baru.",
+    });
+  };
   return (
     <>
       <div
@@ -45,7 +79,7 @@ const Item = ({
           <div
             role="button"
             className="h-full rounded-sm mr-1 hover:bg-neutral-300"
-            onClick={() => {}}
+            onClick={handleExpand}
           >
             <ChevronIcon className="w-4 h-4 shrink-0 text-muted-foreground/50" />
           </div>
@@ -61,9 +95,34 @@ const Item = ({
             <span className="text-xs">ctrl</span> + F
           </kbd>
         )}
+        {!!id && (
+          <div className="flex items-center ml-auto gap-x-2">
+            <div
+              role="button"
+              onClick={handleCreate}
+              className="h-full opacity-0 ml-auto rounded-sm hover:bg-neutral-300 group-hover:opacity-100"
+            >
+              <Plus className="w-4 h-4 text-muted-foreground" />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
 export default Item;
+
+Item.Skeleton = function ItemSkeleton({ level }: { level?: number }) {
+  return (
+    <>
+      <div
+        style={{ paddingLeft: level ? `${level * 12 + 12}px` : "12px" }}
+        className="flex gap-x-2 py-[3px]"
+      >
+        <Skeleton className="w-4 h-4" />
+        <Skeleton className="w-[30%] h-4" />
+      </div>
+    </>
+  );
+};
