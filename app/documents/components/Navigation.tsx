@@ -9,6 +9,7 @@ import { ElementRef, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 import { cn } from "@/lib/utils";
+import UserItem from "./UserItem";
 
 export const Navigation = () => {
   const params = useParams();
@@ -27,6 +28,7 @@ export const Navigation = () => {
     } else {
       resetWidth();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMobile]);
 
   useEffect(() => {
@@ -116,7 +118,9 @@ export const Navigation = () => {
         >
           <ChevronsLeft className="h-6 w-6" />
         </div>
-        <div>Item Actions</div>
+        <div>
+          <UserItem/>
+        </div>
         <div className="mt-4">Documents</div>
         <div
           onMouseDown={handleMouseDown}
