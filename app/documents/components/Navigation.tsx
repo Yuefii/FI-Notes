@@ -28,6 +28,7 @@ import {
 import TrashBox from "./TrashBox";
 import { useSearch } from "@/hooks/useSearch";
 import { useSetting } from "@/hooks/useSetting";
+import Navbar from "./Navbar";
 
 export const Navigation = () => {
   const create = useMutation(api.documents.create);
